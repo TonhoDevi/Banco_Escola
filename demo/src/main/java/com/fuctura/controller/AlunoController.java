@@ -1,7 +1,9 @@
 package com.fuctura.controller;
 
 import com.fuctura.dao.AlunoDAO;
+import com.fuctura.dao.CursoDAO;
 import com.fuctura.models.Aluno;
+import com.fuctura.models.Curso;
 
 import java.util.List;
 import java.util.Scanner;
@@ -198,6 +200,58 @@ public class AlunoController {
     }
 
     // ─────────────────────────────────────────────
+    // MATRICULAR EM CURSO
+    // ─────────────────────────────────────────────
+
+    /**
+     * Busca um aluno pelo ID, exibe os cursos disponíveis e permite
+     * vincular o aluno a um deles, atualizando o curso_id.
+     */
+    public static void matricularAlunoEmCurso() {
+        System.out.println("\n--- MATRICULAR ALUNO EM CURSO ---");
+
+        int alunoId = lerInteiroPositivo("ID do aluno: ");
+
+        Aluno aluno = AlunoDAO.findAlunoById(alunoId);
+        if (aluno == null) {
+            System.out.println("Aluno com ID " + alunoId + " não foi encontrado.");
+            return;
+        }
+
+        System.out.println("Aluno selecionado: " + aluno.getNome());
+
+        // Busca todos os cursos disponíveis (até 100, suficiente para a maioria dos casos)
+        List<Curso> cursos = CursoDAO.findAllCursos(100, 0);
+
+        if (cursos.isEmpty()) {
+            System.out.println("Nenhum curso cadastrado no sistema. Cadastre um curso primeiro.");
+            return;
+        }
+
+        System.out.println("\nCursos disponíveis:");
+        for (Curso curso : cursos) {
+            System.out.println(curso.getId() + " - " + curso.getNome() +
+                    " (" + curso.getCargaHoraria() + "h)");
+        }
+
+        int cursoId = lerIdDeCursoValido("\nDigite o ID do curso escolhido: ", cursos);
+
+        boolean sucesso = AlunoDAO.matricularAlunoEmCurso(alunoId, cursoId);
+
+        if (sucesso) {
+            Curso cursoEscolhido = cursos.stream()
+                    .filter(c -> c.getId() == cursoId)
+                    .findFirst()
+                    .orElse(null);
+            String nomeCurso = cursoEscolhido != null ? cursoEscolhido.getNome() : "ID " + cursoId;
+            System.out.println("Aluno " + aluno.getNome() + " matriculado no curso " + nomeCurso + " com sucesso!");
+        } else {
+            System.out.println("Falha ao matricular o aluno no curso.");
+        }
+    }
+
+
+    // ─────────────────────────────────────────────
     // Helpers privados de leitura segura
     // ─────────────────────────────────────────────
 
@@ -229,6 +283,29 @@ public class AlunoController {
                 int valor = Integer.parseInt(entrada);
                 if (valor >= 0) return valor;
                 System.out.println("O valor não pode ser negativo. Tente novamente.");
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Digite um número inteiro.");
+            }
+        }
+    }
+    /**
+     * Lê um ID de curso do terminal, repetindo enquanto o valor não estiver
+     * presente na lista de cursos disponíveis.
+     */
+    private static int lerIdDeCursoValido(String mensagem, List<Curso> cursosDisponiveis) {
+        while (true) {
+            System.out.print(mensagem);
+            String entrada = scan.nextLine().trim();
+            try {
+                int id = Integer.parseInt(entrada);
+                //cursosDisponiveis: É a lista de cursos cadastrados que a função recebeu.
+                //
+                //stream().anyMatch(...): É uma forma moderna do Java de fazer uma busca rápida. Ela percorre a lista e pergunta: "Existe qualquer um (anyMatch) curso c cujo ID (c.getId()) seja igual ao id que o usuário digitou?"
+                //
+                //O resultado será true (verdadeiro) se o curso existir, ou false (falso) se não existir.
+                boolean existe = cursosDisponiveis.stream().anyMatch(c -> c.getId() == id);
+                if (existe) return id;
+                System.out.println("ID não corresponde a nenhum curso da lista. Tente novamente.");
             } catch (NumberFormatException e) {
                 System.out.println("Entrada inválida. Digite um número inteiro.");
             }

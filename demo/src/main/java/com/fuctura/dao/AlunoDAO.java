@@ -72,7 +72,32 @@ public class AlunoDAO {
         }
         return new ArrayList<>();
     }
+    /**
+     * Vincula um aluno a um curso, atualizando apenas o campo curso_id.
+     * Passar null em cursoId remove o vínculo (aluno sem curso).
+     * Retorna true se pelo menos uma linha foi afetada.
+     */
+    public static boolean matricularAlunoEmCurso(int alunoId, Integer cursoId) {
+        String sql = "UPDATE alunos SET curso_id = ? WHERE id = ?";
+        try (
+                Connection con = Conexao.obterConexao();
+                PreparedStatement argumentoSQL = con.prepareStatement(sql)) {
 
+            if (cursoId == null) {
+                argumentoSQL.setNull(1, java.sql.Types.INTEGER);
+            } else {
+                argumentoSQL.setInt(1, cursoId);
+            }
+            argumentoSQL.setInt(2, alunoId);
+
+            int linhasAfetadas = argumentoSQL.executeUpdate();
+            return linhasAfetadas > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao matricular aluno no curso: " + e.getMessage());
+        }
+        return false;
+    }
     /**
      * Atualiza os dados de um aluno recebendo apenas o objeto Aluno como parâmetro.
      */
