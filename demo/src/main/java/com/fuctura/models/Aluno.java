@@ -7,19 +7,21 @@ public class Aluno {
     private int idade;
     private String email;
     private boolean matricula;
+    private Integer cursoId;
 
     // Construtor completo (usado ao buscar do banco)
-    public Aluno(int id, String nome, int idade, String email, boolean matricula) {
+    public Aluno(int id, String nome, int idade, String email, boolean matricula, Integer cursoId) {
         this.id = id;
         this.nome = nome;
         this.idade = idade;
         this.email = email;
         this.matricula = matricula;
+        this.cursoId = cursoId;
     }
 
     // Construtor sem ID (usado ao inserir — banco gera o ID com SERIAL)
-    public Aluno(String nome, int idade, String email, boolean matricula) {
-        this(0, nome, idade, email, matricula);
+    public Aluno(String nome, int idade, String email, boolean matricula, Integer cursoId) {
+        this(0, nome, idade, email, matricula, cursoId);
     }
 
     // Getters
@@ -43,6 +45,9 @@ public class Aluno {
     public boolean isMatricula() {
         return matricula;
     }
+    public Integer getCursoId() {
+        return cursoId;
+    }
 
     // Setters
     public void setId(int id) {
@@ -64,10 +69,13 @@ public class Aluno {
     public void setMatricula(boolean matricula) {
         this.matricula = matricula;
     }
+    public void setCursoId(Integer cursoId) {
+        this.cursoId = cursoId;
+    }
 
     @Override
     public String toString() {
-        return String.format("Aluno{id=%d, nome='%s', idade=%d, email='%s', matricula=%s} \n",
-                id, nome, idade, email, matricula);
+        return String.format("Aluno{id=%d, nome='%s', idade=%d, email='%s', matricula=%s, cursoId=%s} \n",
+                id, nome, idade, email, matricula, cursoId);
     }
 }

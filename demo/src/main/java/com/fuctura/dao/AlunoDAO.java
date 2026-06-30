@@ -60,7 +60,8 @@ public class AlunoDAO {
                                 tabelaResult.getString("nome"),
                                 tabelaResult.getInt("idade"),
                                 tabelaResult.getString("email"),
-                                tabelaResult.getBoolean("matricula")
+                                tabelaResult.getBoolean("matricula"),
+                                tabelaResult.getInt("curso_id")
                         )
                 );
             }
@@ -87,8 +88,8 @@ public class AlunoDAO {
             argumentoSQL.setBoolean(4, aluno.isMatricula()); // ou getMatricula() dependendo do seu modelo
             argumentoSQL.setInt(5, alunoID);
 
-            argumentoSQL.executeQuery();
-            return true;
+            int linhasAfetadas = argumentoSQL.executeUpdate();
+            return linhasAfetadas > 0;
 
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar o aluno: " + e.getMessage());
@@ -107,8 +108,8 @@ public class AlunoDAO {
 
             argumentoSQL.setInt(1, id);
 
-            ResultSet tabelaResult = argumentoSQL.executeQuery();
-            return true;
+            int linhasAfetadas = argumentoSQL.executeUpdate();
+            return linhasAfetadas > 0;
         } catch (SQLException e) {
             System.out.println("Erro ao deletar o aluno: " + e.getMessage());
         }
@@ -133,7 +134,8 @@ public class AlunoDAO {
                         tabelaResult.getString("nome"),
                         tabelaResult.getInt("idade"),
                         tabelaResult.getString("email"),
-                        tabelaResult.getBoolean("matricula")
+                        tabelaResult.getBoolean("matricula"),
+                        tabelaResult.getInt("curso_id")
                 );
             }
 
