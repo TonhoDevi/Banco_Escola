@@ -35,7 +35,7 @@ public class AlunoDAO {
     }
 
     public static List<Aluno> findAllAluno(int max, int offset ){
-        String sql = "SELECT id, nome, idade, email, matricula FROM alunos ORDER BY nome ASC LIMIT ? OFFSET ?";
+        String sql = "SELECT id, nome, idade, email, matricula, curso_id FROM alunos ORDER BY nome ASC LIMIT ? OFFSET ?";
         try (
                 Connection con = Conexao.obterConexao();
                 PreparedStatement argumentoSQL = con.prepareStatement(sql)) {
@@ -43,7 +43,6 @@ public class AlunoDAO {
             if (max < 1) max = 1;
             if (max > 100) max = 100;
             if (offset < 0) offset = 0;
-            if (offset > 100) offset = 100;
 
             argumentoSQL.setInt(1,max);
             argumentoSQL.setInt(2,offset);
@@ -145,7 +144,7 @@ public class AlunoDAO {
      * Busca um aluno específico pelo seu ID.
      */
     public static Aluno findAlunoById(int id) {
-        String sql = "SELECT id, nome, idade, email, matricula FROM alunos WHERE id = ?";
+        String sql = "SELECT id, nome, idade, email, matricula, curso_id FROM alunos WHERE id = ?";
         try (
                 Connection con = Conexao.obterConexao();
                 PreparedStatement argumentoSQL = con.prepareStatement(sql)) {
